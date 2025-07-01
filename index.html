@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Code AI Agent</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+    }
+    #chat {
+      white-space: pre-wrap;
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      min-height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>💻 Code AI Agent</h1>
+  <p>Ask me coding questions:</p>
+  <input type="text" id="prompt" placeholder="e.g. Write a hello world in Python" />
+  <button onclick="askAI()">Ask</button>
+  <h3>Chat:</h3>
+  <div id="chat"></div>
+
+  <script>
+    async function askAI() {
+      const prompt = document.getElementById("prompt").value.trim();
+      if (!prompt) {
+        alert("Please enter a question!");
+        return;
+      }
+
+      const chat = document.getElementById("chat");
+      chat.innerHTML += `👉 <strong>You:</strong> ${prompt}\n`;
+
+      const response = await fetch("http://127.0.0.1:8000/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ prompt })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        chat.innerHTML += `🤖 <strong>AI:</strong> ${data.response}\n\n`;
+      } else {
+        chat.innerHTML += `⚠️ <strong>Error:</strong> ${response.status}\n`;
+      }
+
+      document.getElementById("prompt").value = "";
+    }
+  </script>
+</body>
+</html>
